@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Java Programming Module - 25ITT32{% endblock %}
+{% block page_title %}Java Programming & OOP Architecture (25ITT32){% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Left Column: Interactive Live Java Engine Terminal -->
+    <div class="col-lg-6">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <div class="d-flex align-items-center gap-2">
+                    <h6 class="card-title-academic">
+                        <i class="fa-brands fa-java text-danger fs-5"></i> Live Java 21 LTS Engine Runner
+                    </h6>
+                    <span class="badge bg-danger">OpenJDK 21</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-3">
+                    Directly invokes the compiled Java classes via <code>java -cp "bin;lib/*" com.vcet.studentanalysis.JavaEngineRunner</code> executing JDBC, OOP, and Java 21 Streams API in real time.
+                </p>
+
+                <!-- Action Controls -->
+                <div class="row g-2 mb-3">
+                    <div class="col-sm-8">
+                        <label class="small fw-bold text-muted">Select Java Execution Action:</label>
+                        <select id="javaActionSelect" class="form-select form-select-sm">
+                            <option value="test">1. General OOP, Inheritance & DB Verification</option>
+                            <option value="marksheet" selected>2. Generate Student Marksheet (Reg: 732925ITR038)</option>
+                            <option value="ranklist">3. Java 21 Streams API Merit Rank List</option>
+                            <option value="streams-analytics">4. Streams API: Distinction, Arrears & Class Avg</option>
+                            <option value="lowpass">5. Subject Pass Rates & Low Pass Identifier</option>
+                            <option value="deptsummary">6. Department Summary Aggregate</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 d-flex align-items-end">
+                        <button class="btn btn-danger btn-sm w-100" id="btnRunJava" onclick="executeJavaEngine()">
+                            <i class="fa-solid fa-play"></i> Execute JVM
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Terminal Output Window -->
+                <div class="terminal-window" style="min-height: 420px;">
+                    <div class="terminal-header">
+                        <span class="terminal-dot dot-red"></span>
+                        <span class="terminal-dot dot-yellow"></span>
+                        <span class="terminal-dot dot-green"></span>
+                        <span class="text-muted ms-2 small" id="javaCommandLabel">JVM Standby</span>
+                    </div>
+                    <pre id="javaConsoleOutput" class="mb-0 text-white" style="font-family: var(--font-code); font-size: 0.8rem;">Click 'Execute JVM' to run Java business logic in real time...</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Java Concepts Syllabus Mapping Accordion -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic small">
+                    <i class="fa-solid fa-list-check text-primary"></i> Java Concepts Mapping (Units 1 - 5)
+                </h6>
+            </div>
+            <div class="card-body small">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Syllabus Concept</th>
+                                <th>Implementation in Project</th>
+                                <th>Source File</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Inheritance</strong></td>
+                                <td><code>Student</code> extends <code>Person</code></td>
+                                <td><code>model/Student.java</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Abstract Classes</strong></td>
+                                <td><code>abstract class Person</code> with <code>getRoleDescription()</code></td>
+                                <td><code>model/Person.java</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Encapsulation</strong></td>
+                                <td>Private attributes with public getters/setters</td>
+                                <td><code>model/Mark.java</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Interfaces</strong></td>
+                                <td><code>StudentDAO</code>, <code>SubjectDAO</code>, <code>MarkDAO</code></td>
+                                <td><code>dao/MarkDAO.java</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dynamic Dispatch</strong></td>
+                                <td>Polymorphic method overriding in <code>Student</code></td>
+                                <td><code>model/Student.java</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Exception Handling</strong></td>
+                                <td>Custom <code>InvalidMarkException</code>, <code>StudentNotFoundException</code></td>
+                                <td><code>exception/*.java</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>JDBC Connection</strong></td>
+                                <td>Singleton connection, PreparedStatements, ResultSets</td>
+                                <td><code>util/DBConnection.java</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Java 21 Streams</strong></td>
+                                <td><code>filter</code>, <code>mapToDouble</code>, <code>sorted</code>, <code>collect</code></td>
+                                <td><code>service/AcademicEvaluationServiceImpl.java</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Collections & Generics</strong></td>
+                                <td><code>List&lt;StudentResult&gt;</code>, <code>Map&lt;String, Object&gt;</code></td>
+                                <td><code>service/AcademicEvaluationService.java</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Interactive Source Code Inspector -->
+    <div class="col-lg-6">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <div class="d-flex align-items-center gap-3">
+                    <h6 class="card-title-academic">
+                        <i class="fa-solid fa-code text-primary"></i> Interactive Java Source Code Inspector
+                    </h6>
+                </div>
+                <div style="min-width: 220px;">
+                    <select id="codeFileSelect" class="form-select form-select-sm" onchange="loadSourceFile()">
+                        <optgroup label="Model Layer (OOP & Inheritance)">
+                            <option value="model/Person.java">Person.java (Abstract Class)</option>
+                            <option value="model/Student.java" selected>Student.java (Inheritance)</option>
+                            <option value="model/Mark.java">Mark.java (Encapsulation)</option>
+                            <option value="model/StudentResult.java">StudentResult.java (DTO)</option>
+                            <option value="model/Subject.java">Subject.java (Course Entity)</option>
+                        </optgroup>
+                        <optgroup label="Service Layer (Streams & Logic)">
+                            <option value="service/impl/AcademicEvaluationServiceImpl.java">AcademicEvaluationServiceImpl.java (Streams & Lambdas)</option>
+                            <option value="service/AcademicEvaluationService.java">AcademicEvaluationService.java (Interface)</option>
+                        </optgroup>
+                        <optgroup label="Data Access Layer (JDBC)">
+                            <option value="dao/impl/MarkDAOImpl.java">MarkDAOImpl.java (JDBC & Views)</option>
+                            <option value="dao/impl/StudentDAOImpl.java">StudentDAOImpl.java (PreparedStatement)</option>
+                            <option value="util/DBConnection.java">DBConnection.java (Singleton JDBC)</option>
+                        </optgroup>
+                        <optgroup label="Exception Handling">
+                            <option value="exception/InvalidMarkException.java">InvalidMarkException.java (User Exception)</option>
+                            <option value="exception/StudentNotFoundException.java">StudentNotFoundException.java</option>
+                        </optgroup>
+                        <optgroup label="Execution Runner">
+                            <option value="JavaEngineRunner.java">JavaEngineRunner.java (CLI Bridge)</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div style="max-height: 700px; overflow-y: auto;">
+                    <pre class="m-0" style="border-radius: 0 0 10px 10px;"><code class="language-java" id="sourceCodeViewer">// Loading source code...</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function executeJavaEngine() {
+    const action = document.getElementById('javaActionSelect').value;
+    const btn = document.getElementById('btnRunJava');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Running JVM...';
+
+    document.getElementById('javaCommandLabel').innerText = `java com.vcet.studentanalysis.JavaEngineRunner --action=${action}`;
+
+    fetch('/api/java/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: action, reg_no: '732925ITR038' })
+    })
+    .then(res => res.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Execute JVM';
+
+        if (data.success) {
+            document.getElementById('javaConsoleOutput').innerText = data.stdout || '[Success with no output]';
+            showToast('Java engine executed successfully!', 'success');
+        } else {
+            document.getElementById('javaConsoleOutput').innerText = (data.stderr || data.error || 'JVM execution error.');
+            showToast('Java execution failed.', 'danger');
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Execute JVM';
+        showToast('Failed to communicate with Java runner.', 'danger');
+    });
+}
+
+function loadSourceFile() {
+    const file = document.getElementById('codeFileSelect').value;
+    const codeElem = document.getElementById('sourceCodeViewer');
+    codeElem.textContent = '// Loading ' + file + '...';
+
+    fetch(`/api/java/source?file=${encodeURIComponent(file)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                codeElem.textContent = data.code;
+                Prism.highlightElement(codeElem);
+            } else {
+                codeElem.textContent = '// Error loading file: ' + data.message;
+            }
+        })
+        .catch(err => {
+            codeElem.textContent = '// Failed to fetch source code.';
+        });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    executeJavaEngine();
+    loadSourceFile();
+});
+</script>
+{% endblock %}

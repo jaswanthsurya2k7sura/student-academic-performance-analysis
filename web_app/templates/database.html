@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+
+{% block title %}Database Module - 25ITT31 DBMS{% endblock %}
+{% block page_title %}Database Management Systems Portal (25ITT31){% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Left Column: Interactive SQL Query Console -->
+    <div class="col-lg-7">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-terminal text-primary"></i> Interactive SQL Query Console (Unit 2 & 3)
+                </h6>
+                <span class="badge bg-primary">SQLite / ANSI SQL</span>
+            </div>
+            <div class="card-body">
+                <!-- Preset Query Buttons -->
+                <div class="mb-3">
+                    <div class="small fw-bold text-muted text-uppercase mb-2">Preset Syllabus SQL Queries:</div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-xs btn-outline-dark" onclick="setQuery(1)">
+                            <i class="fa-solid fa-link"></i> 4-Table Joins
+                        </button>
+                        <button class="btn btn-xs btn-outline-danger" onclick="setQuery(2)">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Low Pass Rates (&lt; 85%)
+                        </button>
+                        <button class="btn btn-xs btn-outline-success" onclick="setQuery(3)">
+                            <i class="fa-solid fa-calculator"></i> GPA Aggregation
+                        </button>
+                        <button class="btn btn-xs btn-outline-primary" onclick="setQuery(4)">
+                            <i class="fa-solid fa-code-fork"></i> Nested Subquery
+                        </button>
+                        <button class="btn btn-xs btn-outline-info" onclick="setQuery(5)">
+                            <i class="fa-solid fa-building"></i> Dept Summary
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SQL Input Area -->
+                <div class="mb-3">
+                    <textarea id="sqlInput" class="form-control font-monospace" rows="6" style="font-size: 0.85rem;" placeholder="Enter custom SQL query..."></textarea>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted"><i class="fa-solid fa-shield-halved"></i> Sandboxed read-only query execution</small>
+                    <button class="btn btn-primary btn-sm px-4" id="btnExecuteSql" onclick="executeSql()">
+                        <i class="fa-solid fa-play"></i> Run Query
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SQL Query Results Window -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <div class="d-flex align-items-center gap-2">
+                    <h6 class="card-title-academic">
+                        <i class="fa-solid fa-table text-success"></i> Query Execution Output
+                    </h6>
+                    <span class="badge bg-secondary" id="sqlRowCount">0 Rows</span>
+                </div>
+            </div>
+            <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+                <table class="table table-sm table-academic table-bordered mb-0" id="sqlResultTable">
+                    <thead id="sqlResultHead" class="sticky-top"></thead>
+                    <tbody id="sqlResultBody">
+                        <tr><td class="text-center py-4 text-muted">Run a query to view execution output.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Database Architecture, ER Diagram & Normalization -->
+    <div class="col-lg-5">
+        <!-- Normalization (1NF -> BCNF) Card -->
+        <div class="card-academic mb-4">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic small">
+                    <i class="fa-solid fa-layer-group text-warning"></i> Normalization Details (Unit 3)
+                </h6>
+                <span class="badge bg-success">BCNF Verified</span>
+            </div>
+            <div class="card-body small">
+                <div class="accordion" id="normAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-2 small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#norm1NF">
+                                1NF: Atomic Values & Primary Keys
+                            </button>
+                        </h2>
+                        <div id="norm1NF" class="accordion-collapse collapse" data-bs-parent="#normAccordion">
+                            <div class="accordion-body small text-muted">
+                                Flattened multi-valued arrays of subjects and marks into individual tuples. Defined composite primary key: <code>(register_no, subject_code)</code>.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-2 small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#norm2NF">
+                                2NF: Elimination of Partial Dependencies
+                            </button>
+                        </h2>
+                        <div id="norm2NF" class="accordion-collapse collapse" data-bs-parent="#normAccordion">
+                            <div class="accordion-body small text-muted">
+                                Removed partial functional dependencies where non-key attributes depended only on <code>register_no</code> or <code>subject_code</code>. Decomposed into <code>STUDENTS</code>, <code>SUBJECTS</code>, and <code>MARKS</code>.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-2 small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#norm3NF">
+                                3NF: Elimination of Transitive Dependencies
+                            </button>
+                        </h2>
+                        <div id="norm3NF" class="accordion-collapse collapse" data-bs-parent="#normAccordion">
+                            <div class="accordion-body small text-muted">
+                                Removed transitive dependency <code>register_no &rarr; dept_code &rarr; dept_name</code> by extracting the <code>DEPARTMENTS</code> relation with <code>dept_id</code> as foreign key.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button py-2 small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#normBCNF">
+                                BCNF: Determinant is Candidate Key
+                            </button>
+                        </h2>
+                        <div id="normBCNF" class="accordion-collapse collapse show" data-bs-parent="#normAccordion">
+                            <div class="accordion-body small text-muted">
+                                In all 4 relations (<code>departments</code>, <code>students</code>, <code>subjects</code>, <code>marks</code>), every determinant $X$ in $X \rightarrow Y$ is a superkey. Proven Lossless Join and Dependency Preserving.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Entity-Relationship (ER) Diagram Card -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic small">
+                    <i class="fa-solid fa-project-diagram text-info"></i> Entity-Relationship (ER) Schema
+                </h6>
+            </div>
+            <div class="card-body p-2 text-center">
+                <div class="mermaid text-start" style="font-size: 0.75rem;">
+erDiagram
+    DEPARTMENT ||--o{ STUDENT : "enrolls"
+    DEPARTMENT ||--o{ SUBJECT : "offers"
+    STUDENT ||--o{ MARK : "secures"
+    SUBJECT ||--o{ MARK : "evaluated_in"
+
+    DEPARTMENT {
+        int dept_id PK
+        string dept_code UK
+        string dept_name
+        string hod_name
+    }
+    STUDENT {
+        string register_no PK
+        string name
+        int dept_id FK
+        string section
+    }
+    SUBJECT {
+        string subject_code PK
+        string subject_name
+        int credits
+        double max_total
+    }
+    MARK {
+        int mark_id PK
+        string register_no FK
+        string subject_code FK
+        double total_marks
+        string grade
+        string status
+    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const PRESET_QUERIES = {
+    1: `SELECT 
+    s.register_no,
+    s.name AS student_name,
+    s.section,
+    sub.subject_code,
+    sub.subject_name,
+    m.internal_marks,
+    m.external_marks,
+    m.total_marks,
+    m.grade,
+    m.status
+FROM students s
+JOIN departments d ON s.dept_id = d.dept_id
+JOIN marks m ON s.register_no = m.register_no
+JOIN subjects sub ON m.subject_code = sub.subject_code
+WHERE s.register_no = '732925ITR038'
+ORDER BY sub.subject_code;`,
+
+    2: `SELECT 
+    sub.subject_code,
+    sub.subject_name,
+    COUNT(m.mark_id) AS total_appeared,
+    SUM(CASE WHEN m.status = 'PASS' THEN 1 ELSE 0 END) AS passed,
+    SUM(CASE WHEN m.status = 'FAIL' THEN 1 ELSE 0 END) AS failed,
+    ROUND((SUM(CASE WHEN m.status = 'PASS' THEN 1.0 ELSE 0.0 END) / COUNT(m.mark_id)) * 100, 2) AS pass_percentage,
+    ROUND(AVG(m.total_marks), 2) AS avg_score
+FROM subjects sub
+JOIN marks m ON sub.subject_code = m.subject_code
+GROUP BY sub.subject_code, sub.subject_name
+HAVING pass_percentage < 85.0;`,
+
+    3: `SELECT 
+    s.register_no,
+    s.name AS student_name,
+    s.section,
+    ROUND(SUM(m.grade_point * sub.credits) * 1.0 / SUM(sub.credits), 2) AS gpa,
+    SUM(m.total_marks) AS grand_total,
+    SUM(CASE WHEN m.status = 'PASS' THEN 1 ELSE 0 END) AS passed,
+    SUM(CASE WHEN m.status = 'FAIL' THEN 1 ELSE 0 END) AS arrears
+FROM students s
+JOIN marks m ON s.register_no = m.register_no
+JOIN subjects sub ON m.subject_code = sub.subject_code
+GROUP BY s.register_no, s.name, s.section
+ORDER BY gpa DESC, grand_total DESC
+LIMIT 8;`,
+
+    4: `SELECT 
+    s.register_no,
+    s.name,
+    s.section,
+    m.total_marks,
+    m.grade
+FROM students s
+JOIN marks m ON s.register_no = m.register_no
+WHERE m.subject_code = '25ITT32'
+  AND m.total_marks > (
+      SELECT AVG(total_marks) 
+      FROM marks 
+      WHERE subject_code = '25ITT32'
+  )
+ORDER BY m.total_marks DESC;`,
+
+    5: `SELECT 
+    d.dept_code,
+    d.dept_name,
+    COUNT(DISTINCT s.register_no) AS total_students,
+    COUNT(m.mark_id) AS total_evaluations,
+    ROUND(AVG(m.total_marks), 2) AS dept_avg_marks,
+    ROUND((SUM(CASE WHEN m.status = 'PASS' THEN 1.0 ELSE 0.0 END) / COUNT(m.mark_id)) * 100, 2) AS pass_percentage
+FROM departments d
+JOIN students s ON d.dept_id = s.dept_id
+JOIN marks m ON s.register_no = m.register_no
+GROUP BY d.dept_id, d.dept_code, d.dept_name;`
+};
+
+function setQuery(num) {
+    document.getElementById('sqlInput').value = PRESET_QUERIES[num] || '';
+    executeSql();
+}
+
+function executeSql() {
+    const query = document.getElementById('sqlInput').value.trim();
+    if (!query) {
+        showToast('Please enter an SQL query to execute.', 'warning');
+        return;
+    }
+
+    const btn = document.getElementById('btnExecuteSql');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Running...';
+
+    fetch('/api/db/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: query })
+    })
+    .then(res => res.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Run Query';
+
+        if (!data.success) {
+            showToast('SQL Error: ' + data.error, 'danger');
+            document.getElementById('sqlResultHead').innerHTML = '';
+            document.getElementById('sqlResultBody').innerHTML = `<tr><td class="text-danger py-3 font-monospace">${data.error}</td></tr>`;
+            document.getElementById('sqlRowCount').innerText = '0 Rows';
+            return;
+        }
+
+        document.getElementById('sqlRowCount').innerText = `${data.row_count} Rows`;
+        const thead = document.getElementById('sqlResultHead');
+        const tbody = document.getElementById('sqlResultBody');
+
+        if (data.columns) {
+            let hHtml = '<tr>';
+            data.columns.forEach(col => {
+                hHtml += `<th>${col}</th>`;
+            });
+            hHtml += '</tr>';
+            thead.innerHTML = hHtml;
+
+            let bHtml = '';
+            data.rows.forEach(r => {
+                bHtml += '<tr>';
+                r.forEach(val => {
+                    bHtml += `<td>${val !== null ? val : '<span class="text-muted">NULL</span>'}</td>`;
+                });
+                bHtml += '</tr>';
+            });
+            tbody.innerHTML = bHtml || '<tr><td colspan="100%" class="text-center py-3 text-muted">0 rows returned.</td></tr>';
+        } else {
+            thead.innerHTML = '';
+            tbody.innerHTML = `<tr><td class="text-success py-3 fw-bold">${data.message}</td></tr>`;
+        }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Run Query';
+        showToast('Query request failed.', 'danger');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setQuery(1);
+});
+</script>
+{% endblock %}

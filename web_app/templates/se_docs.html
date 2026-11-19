@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+
+{% block title %}Software Engineering Documentation - 25ITT33{% endblock %}
+{% block page_title %}Software Engineering & System Architecture (25ITT33){% endblock %}
+
+{% block content %}
+<ul class="nav nav-pills mb-4 gap-2" id="seTabs" role="tablist">
+    <li class="nav-item">
+        <button class="nav-link active" id="srs-tab" data-bs-toggle="pill" data-bs-target="#srsPane">
+            <i class="fa-solid fa-file-lines me-1"></i> IEEE SRS Document
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="diagrams-tab" data-bs-toggle="pill" data-bs-target="#diagramsPane">
+            <i class="fa-solid fa-diagram-project me-1"></i> UML & Design Diagrams
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="testing-tab" data-bs-toggle="pill" data-bs-target="#testingPane">
+            <i class="fa-solid fa-vial-circle-check me-1"></i> Testing & Verification (15 Cases)
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="metrics-tab" data-bs-toggle="pill" data-bs-target="#metricsPane">
+            <i class="fa-solid fa-gauge-high me-1"></i> Quality Metrics & Lifecycle
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="seTabContent">
+    <!-- PANE 1: IEEE SRS DOCUMENT -->
+    <div class="tab-pane fade show active" id="srsPane">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-book-bookmark text-primary"></i> Software Requirements Specification (IEEE Std 830-1998)
+                </h6>
+                <span class="badge bg-primary">IEEE 830 Standard</span>
+            </div>
+            <div class="card-body">
+                <div class="p-4 bg-light rounded border mb-4">
+                    <h5 class="fw-bold text-dark">1. Problem Statement</h5>
+                    <p class="text-muted">
+                        Educational institutions handle student details, course catalogs, continuous internal assessment (CIA) marks, and semester end examination results. Maintaining records manually makes it difficult to compute grade point averages (GPA), detect bottleneck courses with low pass rates, and deliver departmental analytics.
+                        The institution requires a <strong>Student Academic Performance and Result Analysis System (Scenario 8)</strong> to manage student records, calculate results according to autonomous regulations, generate academic marksheets, and visualize performance trends.
+                    </p>
+                </div>
+
+                <h6 class="fw-bold text-primary mb-3">2. Functional Requirements Specifications (FR)</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100 bg-white">
+                            <span class="badge bg-primary mb-2">FR-1</span>
+                            <h6 class="fw-bold">Student Management</h6>
+                            <p class="small text-muted mb-0">Capture Register Number, Full Name, Department, Year, Section, Email, Phone. Enforce unique register IDs and search filtering.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100 bg-white">
+                            <span class="badge bg-warning text-dark mb-2">FR-2</span>
+                            <h6 class="fw-bold">Subject Management</h6>
+                            <p class="small text-muted mb-0">Maintain Subject Code, Title, Credits, Department ID, Semester, Max Internal (40), and Max External (60).</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100 bg-white">
+                            <span class="badge bg-success mb-2">FR-3</span>
+                            <h6 class="fw-bold">Marks Recording & Validation</h6>
+                            <p class="small text-muted mb-0">Record CIA and Semester Exam scores. Immediate rejection of scores exceeding 40.0 internal or 60.0 external.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100 bg-white">
+                            <span class="badge bg-info text-white mb-2">FR-4</span>
+                            <h6 class="fw-bold">Result & GPA Computation</h6>
+                            <p class="small text-muted mb-0">Calculate total scores, assign 10-point letter grades (O, A+, A, B+, B, RA), flag pass/fail status, and compute credit-weighted semester GPA.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100 bg-white">
+                            <span class="badge bg-secondary mb-2">FR-5</span>
+                            <h6 class="fw-bold">Academic Reporting</h6>
+                            <p class="small text-muted mb-0">Generate individual student marksheets, highlight subjects with pass rate &lt; 85%, rank list, and department summary.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100 bg-white">
+                            <span class="badge bg-danger mb-2">FR-6</span>
+                            <h6 class="fw-bold">Data Science Visualizations</h6>
+                            <p class="small text-muted mb-0">Live Python database extraction, Pandas cleaning, IQR outlier detection, and 7 publication-quality EDA charts.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold text-primary mb-3">3. Non-Functional Requirements (NFR)</h6>
+                <div class="row g-2 small">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="p-2 border rounded bg-white">
+                            <strong>Performance:</strong> Sub-second response time for marks entry and report generation across 10,000+ records.
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="p-2 border rounded bg-white">
+                            <strong>Data Integrity:</strong> Foreign key constraints with cascade updates and database level check rules.
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="p-2 border rounded bg-white">
+                            <strong>Maintainability:</strong> Clean 3-Tier Layered MVC architecture separating presentation, service, and DAO.
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="p-2 border rounded bg-white">
+                            <strong>Portability:</strong> Runs on Java 21 LTS and Python 3.10+ across Windows, Linux, and macOS.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANE 2: SYSTEM DESIGN & UML DIAGRAMS -->
+    <div class="tab-pane fade" id="diagramsPane">
+        <div class="row g-4">
+            <!-- Architecture Diagram -->
+            <div class="col-12">
+                <div class="card-academic">
+                    <div class="card-header-academic">
+                        <h6 class="card-title-academic small">
+                            <i class="fa-solid fa-cubes text-primary"></i> 1. Overall System Architecture (3-Tier Layered MVC)
+                        </h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="mermaid text-center">
+flowchart TD
+    subgraph UI_Layer ["Presentation & UI Layer"]
+        WebPortal["Responsive Academic Web Portal (Flask)"]
+        CLI["Java Interactive Console CLI"]
+        Charts["Matplotlib & Seaborn Visualizations"]
+    end
+
+    subgraph Service_Tier ["Business Logic & Service Layer"]
+        AES["AcademicEvaluationService"]
+        GradingEngine["Autonomous Grading & GPA Engine"]
+        JavaStreams["Java 21 Streams & Lambdas"]
+    end
+
+    subgraph DAO_Tier ["Data Access Object (DAO) Layer"]
+        StudentDAO["StudentDAO / StudentDAOImpl"]
+        SubjectDAO["SubjectDAO / SubjectDAOImpl"]
+        MarkDAO["MarkDAO / MarkDAOImpl"]
+        JDBC["Singleton JDBC Connection"]
+    end
+
+    subgraph DB_Tier ["Persistence Tier (DBMS)"]
+        DB[(SQLite / MySQL Database)]
+        Tables["Tables: students, subjects, departments, marks"]
+        Views["Views: v_student_summary, v_subject_perf, v_dept_summary"]
+    end
+
+    WebPortal --> AES
+    CLI --> AES
+    AES --> GradingEngine
+    AES --> JavaStreams
+    AES --> StudentDAO
+    AES --> SubjectDAO
+    AES --> MarkDAO
+    StudentDAO --> JDBC
+    SubjectDAO --> JDBC
+    MarkDAO --> JDBC
+    JDBC --> DB
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Use Case Diagram -->
+            <div class="col-md-6">
+                <div class="card-academic">
+                    <div class="card-header-academic">
+                        <h6 class="card-title-academic small">
+                            <i class="fa-solid fa-users-gear text-info"></i> 2. Use Case Diagram
+                        </h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="mermaid text-center">
+flowchart LR
+    Faculty["Course Faculty"]
+    HOD["HOD / Exam Cell"]
+    StudentActor["Student"]
+
+    subgraph UC_Box ["System Scope"]
+        UC1(["Enter / Edit Marks"])
+        UC2(["Validate Marks Limits"])
+        UC3(["Generate Marksheets"])
+        UC4(["Flag Low Pass Rates"])
+        UC5(["Run Python Analytics"])
+    end
+
+    Faculty --> UC1
+    Faculty --> UC3
+    UC1 -.->|includes| UC2
+    HOD --> UC4
+    HOD --> UC5
+    StudentActor --> UC3
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sequence Diagram -->
+            <div class="col-md-6">
+                <div class="card-academic">
+                    <div class="card-header-academic">
+                        <h6 class="card-title-academic small">
+                            <i class="fa-solid fa-arrows-split-up-and-left text-warning"></i> 3. Sequence Diagram (Marks Processing)
+                        </h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="mermaid text-center">
+sequenceDiagram
+    actor Faculty as Faculty
+    participant Web as Portal
+    participant Service as EvaluationService
+    participant DAO as MarkDAO
+    participant DB as SQLite DB
+
+    Faculty->>Web: Input CIA (40) & ESE (60)
+    Web->>Service: enterMarks()
+    Service->>Service: Validate & computeGrade()
+    Service->>DAO: recordMarks()
+    DAO->>DB: INSERT / UPDATE marks
+    DB-->>DAO: Success
+    DAO-->>Service: Updated
+    Service-->>Web: Formatted Response
+    Web-->>Faculty: Display Result & Grade
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Flow Diagrams -->
+            <div class="col-12">
+                <div class="card-academic">
+                    <div class="card-header-academic">
+                        <h6 class="card-title-academic small">
+                            <i class="fa-solid fa-arrows-spin text-success"></i> 4. Data Flow Diagrams (DFD Level 0 & Level 1)
+                        </h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="mermaid text-center">
+flowchart LR
+    Faculty["Faculty / Staff"]
+    System[("0.0 Academic Performance System")]
+    Admin["HOD / Exam Cell"]
+    StudentActor["Student"]
+
+    Faculty -->|"Student Marks & Curriculum"| System
+    System -->|"Validation Feedback"| Faculty
+    Admin -->|"Generate Reports Request"| System
+    System -->|"Pass Rates, Ranks & Summaries"| Admin
+    StudentActor -->|"Reg No Query"| System
+    System -->|"Semester Marksheet"| StudentActor
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANE 3: TESTING & VERIFICATION -->
+    <div class="tab-pane fade" id="testingPane">
+        <div class="card-academic mb-4">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-vial-circle-check text-success"></i> Testing Strategy & Verification Suite (Unit 4)
+                </h6>
+                <span class="badge bg-success">15 / 15 Test Cases Passed (100%)</span>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 bg-light h-100">
+                            <h6 class="fw-bold text-dark"><i class="fa-solid fa-code-branch text-primary me-2"></i>White-Box Testing: Cyclomatic Complexity</h6>
+                            <p class="small text-muted mb-2">Evaluated the grading decision logic in <code>AcademicEvaluationServiceImpl.computeGrade()</code>:</p>
+                            <ul class="small mb-0">
+                                <li><strong>Predicate Nodes (P):</strong> 5 decision branches</li>
+                                <li><strong>Formula:</strong> $V(G) = P + 1 = 5 + 1 = 6$</li>
+                                <li><strong>Cyclomatic Complexity:</strong> $V(G) = 6$ independent paths</li>
+                                <li><strong>Branch Coverage:</strong> 100% verified across all letter grade paths (O, A+, A, B+, B, RA)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 bg-light h-100">
+                            <h6 class="fw-bold text-dark"><i class="fa-solid fa-border-none text-warning me-2"></i>Black-Box Testing: Boundary Value Analysis</h6>
+                            <p class="small text-muted mb-2">Input partitioning on continuous assessment boundaries:</p>
+                            <ul class="small mb-0">
+                                <li><strong>Internal CIA [0, 40]:</strong> Tested 0.0, 40.0 (Valid); -1.0, 45.0 (Rejected)</li>
+                                <li><strong>External ESE [0, 60]:</strong> Tested 0.0, 26.5 (Arrear), 27.0 (Border Pass), 60.0 (Max)</li>
+                                <li><strong>Passing Criteria:</strong> Tested External 26.0 with Total 61.0 $\implies$ RA (Fail)</li>
+                                <li><strong>Input Validation:</strong> Exception thrown on boundary breach.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 15 Test Cases Table -->
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-academic mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Test ID</th>
+                                <th>Scenario</th>
+                                <th>Input Test Data</th>
+                                <th>Expected Result</th>
+                                <th>Actual Result</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>TC-01</strong></td><td>Student Profile Query</td><td>Reg No: <code>732925ITR038</code></td><td>Profile for Jaswanth surya S</td><td>Loaded correctly with section 25IT3A</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-02</strong></td><td>Valid Mark Entry</td><td>Int: 38.0, Ext: 56.0</td><td>Total: 94.0, Grade: 'O', GP: 10, PASS</td><td>Total: 94.0, Grade: 'O', GP: 10, PASS</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-03</strong></td><td>Boundary Max Marks</td><td>Int: 40.0, Ext: 60.0</td><td>Total: 100.0, Grade: 'O', PASS</td><td>Total: 100.0, Grade: 'O', PASS</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-04</strong></td><td>Boundary Zero Marks</td><td>Int: 0.0, Ext: 0.0</td><td>Total: 0.0, Grade: 'RA', FAIL</td><td>Total: 0.0, Grade: 'RA', FAIL</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-05</strong></td><td>Internal &gt; 40 Rejection</td><td>Int: 45.0, Ext: 50.0</td><td>Throws <code>InvalidMarkException</code></td><td>Exception caught, rejected</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-06</strong></td><td>Negative Marks Rejection</td><td>Int: -5.0, Ext: 40.0</td><td>Throws <code>InvalidMarkException</code></td><td>Exception caught, rejected</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-07</strong></td><td>External Border Pass Check</td><td>Int: 35.0, Ext: 26.0</td><td>Grade: 'RA', FAIL (Ext &lt; 27)</td><td>Assigned 'RA', FAIL</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-08</strong></td><td>Total Border Pass Check</td><td>Int: 20.0, Ext: 27.0</td><td>Grade: 'RA', FAIL (Total &lt; 50)</td><td>Assigned 'RA', FAIL</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-09</strong></td><td>GPA Credit Formula</td><td>Courses with grades O(4), O(3), O(3), O(3)</td><td>GPA = (40+30+30+30)/13 = 10.00</td><td>GPA = 10.00</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-10</strong></td><td>Marksheet Generation</td><td>Reg No: <code>732925ITR038</code></td><td>Grand Total: 377.0, GPA: 10.00</td><td>Rendered accurately with all courses</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-11</strong></td><td>Non-existent Student</td><td>Reg No: <code>999999UNKNOWN</code></td><td>Throws <code>StudentNotFoundException</code></td><td>Handled gracefully with error</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-12</strong></td><td>Low Pass Rate Identifier</td><td>Filter pass rate &lt; 85%</td><td>Flags low pass rate courses</td><td>Filtered with institutional benchmark</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-13</strong></td><td>Duplicate Mark UPSERT</td><td>Duplicate (732925ITR038, 25ITT31)</td><td>UPSERT updates existing mark</td><td>Existing record updated smoothly</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-14</strong></td><td>Python DBMS Retrieval</td><td>Run <code>db_extractor.py</code></td><td>68 marks records to DataFrame</td><td>68 records extracted to Pandas</td><td><span class="badge bg-success">PASS</span></td></tr>
+                            <tr><td><strong>TC-15</strong></td><td>Visualization Export</td><td>Run <code>visualizer.py</code></td><td>7 PNG charts created in visualizations/</td><td>7 high-res charts verified</td><td><span class="badge bg-success">PASS</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANE 4: QUALITY METRICS -->
+    <div class="tab-pane fade" id="metricsPane">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-gauge-high text-info"></i> Software Quality Metrics & Process Evaluation
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <div class="h3 fw-bold text-success mb-1">100%</div>
+                            <div class="small fw-bold text-muted text-uppercase">Test Case Success Rate</div>
+                            <small class="text-muted">15 of 15 Test Cases Passed</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <div class="h3 fw-bold text-primary mb-1">V(G) = 6</div>
+                            <div class="small fw-bold text-muted text-uppercase">Cyclomatic Complexity</div>
+                            <small class="text-muted">Well-structured decision logic</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <div class="h3 fw-bold text-warning mb-1">BCNF</div>
+                            <div class="small fw-bold text-muted text-uppercase">Database Normal Form</div>
+                            <small class="text-muted">Zero redundancy anomalies</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <div class="h3 fw-bold text-info mb-1">&lt; 0.05s</div>
+                            <div class="small fw-bold text-muted text-uppercase">Query Response Time</div>
+                            <small class="text-muted">Indexed primary & foreign keys</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

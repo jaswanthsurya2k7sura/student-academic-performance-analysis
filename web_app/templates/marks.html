@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Marks Management - Academic Performance Portal{% endblock %}
+{% block page_title %}Student Marks Entry & Evaluation{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Left Column: Marks Entry Form -->
+    <div class="col-lg-5">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-pen-nib text-primary"></i> Enter / Update Marks
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="marksEntryForm">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Select Student *</label>
+                        <select name="register_no" id="studentSelect" class="form-select" required>
+                            <option value="">-- Choose Student --</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Select Curriculum Subject *</label>
+                        <select name="subject_code" id="subjectSelect" class="form-select" required>
+                            <option value="">-- Choose Subject --</option>
+                        </select>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold">Internal Marks (CIA) *</label>
+                            <div class="input-group">
+                                <input type="number" step="0.5" min="0" max="40" name="internal_marks" id="inputInternal" class="form-control" placeholder="0 - 40" required>
+                                <span class="input-group-text bg-light text-muted">/ 40</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold">Semester Exam (ESE) *</label>
+                            <div class="input-group">
+                                <input type="number" step="0.5" min="0" max="60" name="external_marks" id="inputExternal" class="form-control" placeholder="0 - 60" required>
+                                <span class="input-group-text bg-light text-muted">/ 60</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Grade Preview Box -->
+                    <div class="p-3 bg-light rounded border mb-3" id="gradePreviewBox">
+                        <div class="small fw-bold text-muted text-uppercase mb-2">Live Grading Preview</div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="h5 mb-0 fw-bold" id="previewTotal">0.0 / 100</div>
+                                <small class="text-muted" id="previewStatus">Enter scores to calculate</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge px-3 py-2 fs-6 bg-secondary" id="previewGrade">--</span>
+                                <div class="small text-muted mt-1" id="previewGP">Grade Point: --</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa-solid fa-floppy-disk"></i> Record / Update Marks
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- College Regulation Rules Card -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic small">
+                    <i class="fa-solid fa-scale-balanced text-warning"></i> Autonomous Grading Criteria
+                </h6>
+            </div>
+            <div class="card-body small">
+                <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                    <li><i class="fa-solid fa-check text-success me-2"></i><strong>Minimum External:</strong> 27.0 / 60 (45%)</li>
+                    <li><i class="fa-solid fa-check text-success me-2"></i><strong>Minimum Total:</strong> 50.0 / 100 (50%)</li>
+                    <li><i class="fa-solid fa-circle-exclamation text-danger me-2"></i><strong>Arrear (RA):</strong> If External &lt; 27 OR Total &lt; 50</li>
+                    <li><i class="fa-solid fa-star text-warning me-2"></i><strong>Grade 'O':</strong> Total &ge; 90.0 (Grade Point 10)</li>
+                    <li><i class="fa-solid fa-star text-primary me-2"></i><strong>Grade 'A+':</strong> Total &ge; 80.0 (Grade Point 9)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: All Marks Records Table -->
+    <div class="col-lg-7">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <div class="d-flex align-items-center gap-3">
+                    <h6 class="card-title-academic">
+                        <i class="fa-solid fa-list-check text-success"></i> Recorded Marks Registry
+                    </h6>
+                    <span class="badge bg-success" id="marksCountBadge">0 Records</span>
+                </div>
+            </div>
+
+            <div class="p-3 bg-light border-bottom">
+                <input type="text" id="marksSearchInput" class="form-control form-control-sm" placeholder="Filter by Student Name, Reg No, or Subject...">
+            </div>
+
+            <div class="table-responsive" style="max-height: 540px; overflow-y: auto;">
+                <table class="table table-academic table-hover mb-0">
+                    <thead class="sticky-top">
+                        <tr>
+                            <th>Student</th>
+                            <th>Subject</th>
+                            <th>Internal</th>
+                            <th>External</th>
+                            <th>Total</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="marksTableBody">
+                        <tr><td colspan="7" class="text-center py-4 text-muted">Loading marks records...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function loadDropdowns() {
+    fetch('/api/students')
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('studentSelect');
+            select.innerHTML = '<option value="">-- Choose Student --</option>';
+            data.students.forEach(s => {
+                select.insertAdjacentHTML('beforeend', `<option value="${s.register_no}">${s.name} (${s.register_no}) - ${s.section}</option>`);
+            });
+        });
+
+    fetch('/api/subjects')
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('subjectSelect');
+            select.innerHTML = '<option value="">-- Choose Subject --</option>';
+            data.subjects.forEach(sub => {
+                select.insertAdjacentHTML('beforeend', `<option value="${sub.subject_code}">${sub.subject_code} - ${sub.subject_name}</option>`);
+            });
+        });
+}
+
+function loadMarksTable() {
+    fetch('/api/marks')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('marksCountBadge').innerText = `${data.count} Records`;
+            const tbody = document.getElementById('marksTableBody');
+            tbody.innerHTML = '';
+
+            data.marks.forEach(m => {
+                const isJaswanth = m.register_no === '732925ITR038';
+                const row = `
+                    <tr class="${isJaswanth ? 'table-warning' : ''}">
+                        <td>
+                            <div class="fw-bold">${m.student_name}</div>
+                            <small class="text-muted"><code>${m.register_no}</code> (${m.section})</small>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">${m.subject_code}</div>
+                            <small class="text-muted">${m.subject_name}</small>
+                        </td>
+                        <td>${m.internal_marks.toFixed(1)}</td>
+                        <td>${m.external_marks.toFixed(1)}</td>
+                        <td><strong>${m.total_marks.toFixed(1)}</strong></td>
+                        <td><span class="badge ${getGradeBadge(m.grade)}">${m.grade}</span></td>
+                        <td><span class="badge ${m.status === 'PASS' ? 'bg-success' : 'bg-danger'}">${m.status}</span></td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        });
+}
+
+function getGradeBadge(grade) {
+    switch (grade) {
+        case 'O': return 'bg-success';
+        case 'A+': return 'bg-primary';
+        case 'A': return 'bg-info text-white';
+        case 'B+': return 'bg-warning text-dark';
+        case 'B': return 'bg-secondary';
+        default: return 'bg-danger';
+    }
+}
+
+function updateLivePreview() {
+    const intVal = parseFloat(document.getElementById('inputInternal').value) || 0;
+    const extVal = parseFloat(document.getElementById('inputExternal').value) || 0;
+    const res = previewGrade(intVal, extVal);
+
+    document.getElementById('previewTotal').innerText = `${res.total.toFixed(1)} / 100`;
+    document.getElementById('previewGrade').innerText = `Grade ${res.grade}`;
+    document.getElementById('previewGrade').className = `badge px-3 py-2 fs-6 ${getGradeBadge(res.grade)}`;
+    document.getElementById('previewGP').innerText = `Grade Point: ${res.gp}`;
+    document.getElementById('previewStatus').innerHTML = res.status === 'PASS' ?
+        '<span class="text-success fw-bold"><i class="fa-solid fa-circle-check"></i> PASS</span>' :
+        '<span class="text-danger fw-bold"><i class="fa-solid fa-triangle-exclamation"></i> ARREAR (FAIL)</span>';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadDropdowns();
+    loadMarksTable();
+
+    document.getElementById('inputInternal').addEventListener('input', updateLivePreview);
+    document.getElementById('inputExternal').addEventListener('input', updateLivePreview);
+
+    // Live search filter
+    filterTable('marksSearchInput', 'marksTableBody');
+
+    // Submit Marks Form
+    document.getElementById('marksEntryForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('/api/marks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resp => {
+            if (resp.success) {
+                showToast(resp.message, 'success');
+                loadMarksTable();
+            } else {
+                showToast(resp.message, 'danger');
+            }
+        })
+        .catch(() => showToast('Failed to record marks.', 'danger'));
+    });
+});
+</script>
+{% endblock %}

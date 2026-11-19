@@ -1,0 +1,449 @@
+{% extends "base.html" %}
+
+{% block title %}Result Analysis & Marksheets - Academic Performance Portal{% endblock %}
+{% block page_title %}Academic Result Analysis & Marksheet Generation{% endblock %}
+
+{% block content %}
+<!-- Navigation Tabs for Analysis Modes -->
+<ul class="nav nav-pills mb-4 gap-2" id="reportTabs" role="tablist">
+    <li class="nav-item">
+        <button class="nav-link active" id="marksheet-tab" data-bs-toggle="pill" data-bs-target="#marksheetPane">
+            <i class="fa-solid fa-file-invoice me-1"></i> Student Marksheet
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="ranks-tab" data-bs-toggle="pill" data-bs-target="#ranksPane">
+            <i class="fa-solid fa-trophy me-1"></i> Merit Rank List
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="subjects-tab" data-bs-toggle="pill" data-bs-target="#subjectsPane">
+            <i class="fa-solid fa-chart-column me-1"></i> Subject Pass Rates
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="arrears-tab" data-bs-toggle="pill" data-bs-target="#arrearsPane">
+            <i class="fa-solid fa-triangle-exclamation me-1"></i> Arrear Students
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="depts-tab" data-bs-toggle="pill" data-bs-target="#deptsPane">
+            <i class="fa-solid fa-building-columns me-1"></i> Department Summary
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="reportTabContent">
+    <!-- PANE 1: INDIVIDUAL STUDENT MARKSHEET -->
+    <div class="tab-pane fade show active" id="marksheetPane">
+        <div class="card-academic mb-4">
+            <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex align-items-center gap-2" style="max-width: 450px;">
+                    <label class="small fw-bold text-nowrap">Select Student:</label>
+                    <select id="marksheetStudentSelect" class="form-select form-select-sm">
+                        <option value="732925ITR038">Jaswanth surya S (732925ITR038) - 25IT3A</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadMarksheet()">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                    <button class="btn btn-sm btn-dark" onclick="printElement('printableMarksheet')">
+                        <i class="fa-solid fa-print"></i> Print Marksheet
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Official Marksheet Card -->
+        <div class="marksheet-box mx-auto" id="printableMarksheet" style="max-width: 860px;">
+            <div class="marksheet-header">
+                <div class="college-name">VELALAR COLLEGE OF ENGINEERING AND TECHNOLOGY</div>
+                <div class="text-muted small fw-bold">(Autonomous - Affiliated to Anna University | Accredited by NAAC with 'A+' Grade)</div>
+                <div class="dept-title mt-1">DEPARTMENT OF INFORMATION TECHNOLOGY</div>
+                <div class="badge bg-dark mt-2 px-3 py-1 text-uppercase">End Semester Examination Marksheet (2026-27 ODD)</div>
+            </div>
+
+            <!-- Student Metadata Grid -->
+            <div class="row g-2 mb-3 small">
+                <div class="col-sm-6">
+                    <div><strong>Register Number :</strong> <code id="msRegNo" class="fs-6 text-primary">732925ITR038</code></div>
+                    <div><strong>Student Name    :</strong> <span id="msName" class="fw-bold">Jaswanth surya S</span></div>
+                    <div><strong>Degree & Branch :</strong> B.Tech - Information Technology</div>
+                </div>
+                <div class="col-sm-6 text-sm-end">
+                    <div><strong>Regulation :</strong> 2026 (Autonomous)</div>
+                    <div><strong>Semester   :</strong> III (Second Year)</div>
+                    <div><strong>Section    :</strong> <span id="msSection" class="fw-bold">25IT3A</span></div>
+                </div>
+            </div>
+
+            <!-- Marksheet Table -->
+            <div class="table-responsive mb-3">
+                <table class="table table-bordered text-center align-middle mb-0" style="font-size: 0.85rem;">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Course Code</th>
+                            <th class="text-start">Course Title</th>
+                            <th>Credits</th>
+                            <th>Internal (40)</th>
+                            <th>External (60)</th>
+                            <th>Total (100)</th>
+                            <th>Letter Grade</th>
+                            <th>Grade Point</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="msTableBody">
+                        <tr><td colspan="9" class="py-3">Loading marksheet data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Consolidated Summary Footer -->
+            <div class="p-3 bg-light rounded border mb-4">
+                <div class="row text-center g-2">
+                    <div class="col-3 border-end">
+                        <div class="small text-muted fw-bold">Grand Total</div>
+                        <div class="h5 mb-0 fw-bold" id="msGrandTotal">-- / 400</div>
+                    </div>
+                    <div class="col-3 border-end">
+                        <div class="small text-muted fw-bold">Percentage</div>
+                        <div class="h5 mb-0 fw-bold text-info" id="msAverage">--%</div>
+                    </div>
+                    <div class="col-3 border-end">
+                        <div class="small text-muted fw-bold">Semester GPA</div>
+                        <div class="h5 mb-0 fw-bold text-primary" id="msGPA">--</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="small text-muted fw-bold">Overall Result</div>
+                        <div class="h5 mb-0 fw-bold text-success" id="msResult">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between text-muted small pt-3 border-top">
+                <div>Date of Publication: <strong>19-Nov-2026</strong></div>
+                <div>Controller of Examinations (Autonomous)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANE 2: MERIT RANK LIST -->
+    <div class="tab-pane fade" id="ranksPane">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-award text-warning"></i> Department Merit List (All Clear Candidates)
+                </h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-academic table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Merit Rank</th>
+                            <th>Register No</th>
+                            <th>Student Name</th>
+                            <th>Section</th>
+                            <th>Grand Total</th>
+                            <th>Average (%)</th>
+                            <th>GPA</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankListBody">
+                        <tr><td colspan="8" class="text-center py-4">Loading rank list...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANE 3: SUBJECT PASS RATES & LOW PASS RATES -->
+    <div class="tab-pane fade" id="subjectsPane">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-chart-column text-primary"></i> Subject Performance Analysis (Low Pass Rate Identifier)
+                </h6>
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                    <i class="fa-solid fa-circle-exclamation"></i> Flagged if &lt; 85%
+                </span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-academic table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Credits</th>
+                            <th>Appeared</th>
+                            <th>Passed</th>
+                            <th>Failed</th>
+                            <th>Pass Rate (%)</th>
+                            <th>Avg Marks</th>
+                            <th>Min</th>
+                            <th>Max</th>
+                            <th>Remedial Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subjectPerfBody">
+                        <tr><td colspan="11" class="text-center py-4">Loading subject performance...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANE 4: ARREAR STUDENTS -->
+    <div class="tab-pane fade" id="arrearsPane">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic text-danger">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Students Requiring Academic Remediation (Arrears)
+                </h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-academic table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Register No</th>
+                            <th>Student Name</th>
+                            <th>Section</th>
+                            <th>Arrear Count</th>
+                            <th>Grand Total</th>
+                            <th>Average (%)</th>
+                            <th>GPA</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="arrearListBody">
+                        <tr><td colspan="8" class="text-center py-4">Loading arrears...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANE 5: DEPARTMENT SUMMARY -->
+    <div class="tab-pane fade" id="deptsPane">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-building-columns text-info"></i> Department Academic Performance Comparison
+                </h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-academic table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Dept Code</th>
+                            <th>Department Name</th>
+                            <th>Total Students</th>
+                            <th>Evaluations</th>
+                            <th>Department Average</th>
+                            <th>Overall Pass Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deptSummaryBody">
+                        <tr><td colspan="6" class="text-center py-4">Loading department summaries...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function loadStudentDropdownForMarksheet() {
+    fetch('/api/students')
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('marksheetStudentSelect');
+            select.innerHTML = '';
+            data.students.forEach(s => {
+                const isJaswanth = s.register_no === '732925ITR038';
+                select.insertAdjacentHTML('beforeend', `
+                    <option value="${s.register_no}" ${isJaswanth ? 'selected' : ''}>
+                        ${s.name} (${s.register_no}) - ${s.section}
+                    </option>
+                `);
+            });
+            loadMarksheet();
+        });
+}
+
+function loadMarksheet() {
+    const regNo = document.getElementById('marksheetStudentSelect').value;
+    if (!regNo) return;
+
+    fetch(`/api/reports/marksheet/${regNo}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                showToast(data.message, 'danger');
+                return;
+            }
+            const sm = data.summary;
+            document.getElementById('msRegNo').innerText = sm.register_no;
+            document.getElementById('msName').innerText = sm.student_name;
+            document.getElementById('msSection').innerText = sm.section;
+            document.getElementById('msGrandTotal').innerText = `${sm.grand_total} / 400.0`;
+            document.getElementById('msAverage').innerText = `${sm.average_marks.toFixed(2)}%`;
+            document.getElementById('msGPA').innerText = sm.gpa.toFixed(2);
+            document.getElementById('msResult').innerText = sm.overall_result;
+            document.getElementById('msResult').className = `h5 mb-0 fw-bold ${sm.overall_result === 'PASS' ? 'text-success' : 'text-danger'}`;
+
+            const tbody = document.getElementById('msTableBody');
+            tbody.innerHTML = '';
+            data.marks.forEach(m => {
+                const row = `
+                    <tr>
+                        <td><strong>${m.subject_code}</strong></td>
+                        <td class="text-start">${m.subject_name}</td>
+                        <td>${m.credits}</td>
+                        <td>${m.internal_marks.toFixed(1)}</td>
+                        <td>${m.external_marks.toFixed(1)}</td>
+                        <td><strong>${m.total_marks.toFixed(1)}</strong></td>
+                        <td><span class="badge ${m.grade === 'O' ? 'bg-success' : (m.grade === 'RA' ? 'bg-danger' : 'bg-primary')}">${m.grade}</span></td>
+                        <td><strong>${m.grade_point}</strong></td>
+                        <td><span class="badge ${m.status === 'PASS' ? 'bg-success' : 'bg-danger'}">${m.status}</span></td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        });
+}
+
+function loadRankList() {
+    fetch('/api/reports/ranks')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('rankListBody');
+            tbody.innerHTML = '';
+            data.ranks.forEach((r, idx) => {
+                const isJaswanth = r.register_no === '732925ITR038';
+                const row = `
+                    <tr class="${isJaswanth ? 'table-warning fw-bold' : ''}">
+                        <td><span class="badge ${idx === 0 ? 'bg-warning text-dark' : 'bg-light text-dark'}">#${idx + 1}</span></td>
+                        <td><code>${r.register_no}</code></td>
+                        <td>${r.student_name} ${isJaswanth ? '<span class="badge bg-primary ms-1">You</span>' : ''}</td>
+                        <td>${r.section}</td>
+                        <td>${r.grand_total} / 400</td>
+                        <td>${r.average_marks.toFixed(2)}%</td>
+                        <td><span class="text-primary fw-bold">${r.gpa.toFixed(2)}</span></td>
+                        <td><span class="badge bg-success">PASS</span></td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        });
+}
+
+function loadSubjectPerformance() {
+    fetch('/api/reports/subjects')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('subjectPerfBody');
+            tbody.innerHTML = '';
+            data.subjects.forEach(s => {
+                const isLow = s.pass_percentage < 85.0;
+                const row = `
+                    <tr class="${isLow ? 'table-danger' : ''}">
+                        <td><code>${s.subject_code}</code></td>
+                        <td><strong>${s.subject_name}</strong></td>
+                        <td>${s.credits}</td>
+                        <td>${s.total_appeared}</td>
+                        <td>${s.total_passed}</td>
+                        <td>${s.total_failed}</td>
+                        <td><strong>${s.pass_percentage.toFixed(2)}%</strong></td>
+                        <td>${s.avg_marks.toFixed(2)}</td>
+                        <td>${s.min_marks}</td>
+                        <td>${s.max_marks}</td>
+                        <td>
+                            <span class="badge ${isLow ? 'bg-danger' : 'bg-success'}">
+                                ${isLow ? 'LOW PASS RATE (< 85%)' : 'NORMAL'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        });
+}
+
+function loadArrears() {
+    fetch('/api/reports/arrears')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('arrearListBody');
+            tbody.innerHTML = '';
+            if (data.arrears.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-success fw-bold">All clear! No student has pending arrears.</td></tr>';
+                return;
+            }
+            data.arrears.forEach(a => {
+                const row = `
+                    <tr>
+                        <td><code>${a.register_no}</code></td>
+                        <td><strong>${a.student_name}</strong></td>
+                        <td>${a.section}</td>
+                        <td><span class="badge bg-danger fs-6">${a.subjects_failed} Arrears</span></td>
+                        <td>${a.grand_total}</td>
+                        <td>${a.average_marks.toFixed(2)}%</td>
+                        <td>${a.gpa.toFixed(2)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewStudentMarksheet('${a.register_no}')">
+                                View Marksheet
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        });
+}
+
+function loadDeptSummary() {
+    fetch('/api/reports/departments')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('deptSummaryBody');
+            tbody.innerHTML = '';
+            data.departments.forEach(d => {
+                const row = `
+                    <tr>
+                        <td><span class="badge bg-dark">${d.dept_code}</span></td>
+                        <td><strong>${d.dept_name}</strong></td>
+                        <td>${d.total_students}</td>
+                        <td>${d.total_evaluations}</td>
+                        <td>${d.dept_avg_marks.toFixed(2)}</td>
+                        <td><span class="text-success fw-bold">${d.overall_pass_percentage.toFixed(2)}%</span></td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        });
+}
+
+function viewStudentMarksheet(regNo) {
+    document.getElementById('marksheetStudentSelect').value = regNo;
+    const tabBtn = new bootstrap.Tab(document.getElementById('marksheet-tab'));
+    tabBtn.show();
+    loadMarksheet();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadStudentDropdownForMarksheet();
+    document.getElementById('marksheetStudentSelect').addEventListener('change', loadMarksheet);
+
+    // Tab event listeners
+    document.getElementById('ranks-tab').addEventListener('shown.bs.tab', loadRankList);
+    document.getElementById('subjects-tab').addEventListener('shown.bs.tab', loadSubjectPerformance);
+    document.getElementById('arrears-tab').addEventListener('shown.bs.tab', loadArrears);
+    document.getElementById('depts-tab').addEventListener('shown.bs.tab', loadDeptSummary);
+});
+</script>
+{% endblock %}

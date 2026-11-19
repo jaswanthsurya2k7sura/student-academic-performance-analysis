@@ -148,7 +148,20 @@ Database initialization complete and verified!
 
 ---
 
-### 3. Compiling and Running the Java Application
+### 3. Running the Presentation-Ready Web Application
+Start the unified full-stack academic web portal:
+```powershell
+python d:\project\web_app\app.py
+```
+Open your browser and navigate to:
+```text
+http://127.0.0.1:5000
+```
+This launches the complete presentation portal featuring all 10 interactive modules (Dashboard, Students, Subjects, Marks, Results, Python Data Science, DBMS SQL Console, Java 21 Engine Runner, and Subject Coverage Faculty Review).
+
+---
+
+### 4. Compiling and Running the Java Application
 Open PowerShell / Command Prompt:
 
 #### Compile Java Code:
@@ -163,9 +176,14 @@ cd d:\project\java_app
 java -cp "bin;lib/*" com.vcet.studentanalysis.Main
 ```
 
+#### Run Java Engine Bridge Directly:
+```powershell
+java -cp "bin;lib/*" com.vcet.studentanalysis.JavaEngineRunner --action=streams-analytics
+```
+
 ---
 
-### 4. Running the Python Data Science & Visualization Pipeline
+### 5. Running the Python Data Science & Visualization Pipeline
 Execute the end-to-end data processing and charting script:
 ```powershell
 python d:\project\python_analysis\run_analysis.py

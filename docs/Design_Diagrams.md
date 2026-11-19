@@ -351,3 +351,112 @@ MARKS (
     UNIQUE(register_no, subject_code)
 )
 ```
+
+---
+
+## 7. Data Flow Diagrams (DFD)
+
+### 7.1 DFD Level 0 (Context Level Diagram)
+The Level 0 context diagram demonstrates external entities interacting with the centralized academic system boundary.
+
+```mermaid
+flowchart LR
+    Faculty["Faculty / Staff"]
+    System[("0.0\nStudent Academic Performance &\nResult Analysis System")]
+    Admin["HOD / Exam Cell"]
+    StudentActor["Student"]
+
+    Faculty -->|"Student Marks & Curriculum Data"| System
+    System -->|"Validation Feedback & Marks Confirmation"| Faculty
+
+    Admin -->|"Report Generation Requests & Filters"| System
+    System -->|"Subject Pass Rates, Rank Lists & Department Summaries"| Admin
+
+    StudentActor -->|"Register Number Query"| System
+    System -->|"Semester Marksheet & GPA"| StudentActor
+```
+
+### 7.2 DFD Level 1 (Detailed Subsystem Flow)
+Level 1 decomposes the system into functional processes: Student Management, Subject Mapping, Mark Entry & Validation, Result & GPA Engine, and Python Data Science Analytics.
+
+```mermaid
+flowchart TD
+    Faculty["Faculty / Course Instructor"]
+    Admin["HOD / Exam Cell"]
+    
+    subgraph DFD_Level_1 ["Level 1 Functional Decomposition"]
+        P1["1.0 Student & Subject Management"]
+        P2["2.0 Mark Recording & Input Validation"]
+        P3["3.0 Result & GPA Computation Engine"]
+        P4["4.0 Academic Reporting & Filtering"]
+        P5["5.0 Python EDA & Visual Analytics"]
+    end
+
+    D1[("D1: STUDENTS")]
+    D2[("D2: SUBJECTS")]
+    D3[("D3: MARKS")]
+    D4[("D4: DEPARTMENTS")]
+
+    Faculty -->|"Student details & Subject credits"| P1
+    P1 -->|"Store student bio-data"| D1
+    P1 -->|"Store course curriculum"| D2
+    
+    Faculty -->|"Raw CIA (40) & ESE (60) marks"| P2
+    D1 -.->|"Verify RegNo"| P2
+    D2 -.->|"Verify SubjectCode"| P2
+    P2 -->|"Validated marks"| P3
+    P3 -->|"Calculate Total, Grade, GP, Status"| D3
+    
+    Admin -->|"Generate Reports Request"| P4
+    D1 -.-> P4
+    D2 -.-> P4
+    D3 -.-> P4
+    D4 -.-> P4
+    P4 -->|"Student Marksheet, Toppers, Low Pass Alerts"| Admin
+
+    D3 -.->|"Extract records for EDA"| P5
+    P5 -->|"Statistical plots, KDE, Boxplots, Heatmaps"| Admin
+```
+
+---
+
+## 8. Activity Diagram: Mark Entry and Result Processing Workflow
+
+```mermaid
+stateDiagram-v2
+    [*] --> SelectStudentAndSubject
+    SelectStudentAndSubject --> EnterScores: Faculty inputs Internal (40) & External (60)
+    EnterScores --> ValidateScores: Check Range [0-40] & [0-60]
+    
+    state ValidateScores <<choice>>
+    ValidateScores --> ShowValidationError: Invalid marks (< 0 or > max)
+    ShowValidationError --> EnterScores: Re-enter valid values
+    
+    ValidateScores --> CalculateTotal: Valid marks
+    CalculateTotal --> CheckPassingConditions: Compute Total = Int + Ext
+    
+    state CheckPassingConditions <<choice>>
+    CheckPassingConditions --> AssignFailGrade: Ext < 27.0 OR Total < 50.0
+    CheckPassingConditions --> EvaluateLetterGrade: Ext >= 27.0 AND Total >= 50.0
+    
+    AssignFailGrade --> SetRA: Grade = 'RA', GradePoint = 0, Status = 'FAIL'
+    
+    state EvaluateLetterGrade <<choice>>
+    EvaluateLetterGrade --> GradeO: Total >= 90 (Grade 'O', GP 10)
+    EvaluateLetterGrade --> GradeAplus: Total >= 80 (Grade 'A+', GP 9)
+    EvaluateLetterGrade --> GradeA: Total >= 70 (Grade 'A', GP 8)
+    EvaluateLetterGrade --> GradeBplus: Total >= 60 (Grade 'B+', GP 7)
+    EvaluateLetterGrade --> GradeB: Total >= 50 (Grade 'B', GP 6)
+
+    GradeO --> PersistDatabase
+    GradeAplus --> PersistDatabase
+    GradeA --> PersistDatabase
+    GradeBplus --> PersistDatabase
+    GradeB --> PersistDatabase
+    SetRA --> PersistDatabase
+
+    PersistDatabase --> UpdateSemesterGPA: Re-calculate GPA = Sum(GP*Credits)/Sum(Credits)
+    UpdateSemesterGPA --> CheckLowPassRate: Aggregate Subject Pass Rate
+    CheckLowPassRate --> [*]: Display Formatted Result Confirmation
+```
+

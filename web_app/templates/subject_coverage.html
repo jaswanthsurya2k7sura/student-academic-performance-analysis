@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}Subject Coverage Mapping - Faculty Presentation{% endblock %}
+{% block page_title %}Comprehensive Subject Coverage & Faculty Defense{% endblock %}
+
+{% block content %}
+<!-- Subject Navigation Pills -->
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <button class="subject-pill-btn active" id="pill-java" onclick="switchSubject('java')">
+        <i class="fa-brands fa-java text-danger fs-5"></i>
+        <span>1. Java Programming (25ITT32)</span>
+    </button>
+    <button class="subject-pill-btn" id="pill-dbms" onclick="switchSubject('dbms')">
+        <i class="fa-solid fa-database text-warning fs-5"></i>
+        <span>2. Database Management Systems (25ITT31)</span>
+    </button>
+    <button class="subject-pill-btn" id="pill-ds" onclick="switchSubject('ds')">
+        <i class="fa-solid fa-chart-line text-info fs-5"></i>
+        <span>3. Foundations of Data Science (25ITC31)</span>
+    </button>
+    <button class="subject-pill-btn" id="pill-se" onclick="switchSubject('se')">
+        <i class="fa-solid fa-diagram-project text-success fs-5"></i>
+        <span>4. Software Engineering (25ITT33)</span>
+    </button>
+</div>
+
+<!-- SECTION 1: JAVA PROGRAMMING -->
+<div class="subject-section" id="section-java">
+    <div class="card-academic mb-4">
+        <div class="card-header-academic bg-danger-subtle">
+            <div>
+                <h5 class="fw-bold mb-1 text-danger"><i class="fa-brands fa-java"></i> Course: Java Programming (25ITT32)</h5>
+                <small class="text-muted">Faculty Presentation Reference Guide & Architectural Implementation</small>
+            </div>
+            <a href="/java-module" class="btn btn-sm btn-danger">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Java Module
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Faculty Presentation Oral Script -->
+            <div class="alert alert-danger border-danger small mb-4">
+                <strong><i class="fa-solid fa-microphone me-2"></i>What to say to Java Faculty:</strong><br>
+                <em>"Respected faculty, in our Student Academic Performance and Result Analysis System, Java serves as the enterprise Object-Oriented service tier. We have strictly avoided monolithic scripts. Instead, we designed an extensible 3-tier architecture with an abstract base class <code>Person</code> demonstrating inheritance, polymorphic method dispatch, interface-driven DAO pattern for database persistence, custom exception handling, and Java 21 Streams API with Lambdas for computing class rank lists and credit-weighted GPAs."</em>
+            </div>
+
+            <!-- Concepts Implementation Table -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-academic align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 18%;">Syllabus Concept</th>
+                            <th style="width: 25%;">Implementation in Project</th>
+                            <th style="width: 22%;">Relevant Source File</th>
+                            <th>Demonstration / Code Snippet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Classes & Objects</strong></td>
+                            <td>Entity representations for students, courses, evaluations, and results</td>
+                            <td><code>java_app/src/com/vcet/studentanalysis/model/Student.java</code></td>
+                            <td><code>Student s = new Student(regNo, name, deptId, year, section, email, phone);</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Inheritance & Abstract Classes</strong></td>
+                            <td><code>Person</code> abstract base class extended by concrete <code>Student</code> class</td>
+                            <td><code>java_app/src/com/vcet/studentanalysis/model/Person.java</code></td>
+                            <td><code>public abstract class Person { public abstract String getRoleDescription(); }</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Polymorphism & Dynamic Dispatch</strong></td>
+                            <td>Method overriding of <code>getRoleDescription()</code> across hierarchical models</td>
+                            <td><code>java_app/src/com/vcet/studentanalysis/model/Student.java</code></td>
+                            <td><code>@Override public String getRoleDescription() { return "Undergraduate Engineering Student..."; }</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Interfaces & DAO Pattern</strong></td>
+                            <td>Separation of contract and implementation for data access operations</td>
+                            <td><code>java_app/src/com/vcet/studentanalysis/dao/StudentDAO.java</code></td>
+                            <td><code>public interface StudentDAO { void addStudent(Student s); Optional&lt;Student&gt; getStudentByRegisterNo(String r); }</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Custom Exception Handling</strong></td>
+                            <td>Specific user-defined exceptions checked during marks entry and lookups</td>
+                            <td><code>java_app/src/com/vcet/studentanalysis/exception/InvalidMarkException.java</code></td>
+                            <td><code>if (internal &gt; 40) throw new InvalidMarkException("Internal marks exceed 40.0");</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Java 21 Streams API & Lambdas</strong></td>
+                            <td>Functional stream pipelines for ranking, filtering arrears, and reduction</td>
+                            <td><code>java_app/src/com/vcet/studentanalysis/service/impl/AcademicEvaluationServiceImpl.java</code></td>
+                            <td><code>return allSummaries.stream().filter(s -&gt; "PASS".equals(s.getStatus())).sorted(Comparator.comparingDouble(StudentResult::getGpa).reversed()).collect(Collectors.toList());</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>JDBC Database Connectivity</strong></td>
+                            <td>Singleton connection manager with PreparedStatements preventing SQL injection</td>
+                            <td><code>java_app/src/com/vcet/studentanalysis/util/DBConnection.java</code></td>
+                            <td><code>PreparedStatement ps = conn.prepareStatement("INSERT INTO marks VALUES (?, ?, ...)");</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 2: DBMS -->
+<div class="subject-section d-none" id="section-dbms">
+    <div class="card-academic mb-4">
+        <div class="card-header-academic bg-warning-subtle">
+            <div>
+                <h5 class="fw-bold mb-1 text-dark"><i class="fa-solid fa-database text-warning"></i> Course: Database Management Systems (25ITT31)</h5>
+                <small class="text-muted">Faculty Presentation Reference Guide & Relational Engineering</small>
+            </div>
+            <a href="/database" class="btn btn-sm btn-warning">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live SQL Console
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Faculty Presentation Oral Script -->
+            <div class="alert alert-warning border-warning small mb-4">
+                <strong><i class="fa-solid fa-microphone me-2"></i>What to say to DBMS Faculty:</strong><br>
+                <em>"Respected faculty, our database tier is modeled and normalized to Boyce-Codd Normal Form (BCNF). We eliminated repeating groups in 1NF, removed partial functional dependencies in 2NF, and decoupled transitive dependencies in 3NF by creating independent <code>DEPARTMENTS</code>, <code>STUDENTS</code>, <code>SUBJECTS</code>, and <code>MARKS</code> relations. Every determinant is a candidate key, satisfying BCNF. We have enforced referential integrity with ON UPDATE CASCADE, indexed foreign keys for $O(\log n)$ performance, and automated grade calculations via SQL triggers and views."</em>
+            </div>
+
+            <!-- Concepts Implementation Table -->
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered table-academic align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 18%;">Syllabus Concept</th>
+                            <th style="width: 25%;">Implementation in Project</th>
+                            <th style="width: 22%;">Relevant Source File</th>
+                            <th>Demonstration / Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Entity-Relationship (ER) Model</strong></td>
+                            <td>Entities (Students, Subjects, Marks, Departments) with 1:M relationships</td>
+                            <td><code>docs/Design_Diagrams.md</code></td>
+                            <td>Crow's foot ER diagram with primary/foreign key mappings</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Normalization (1NF to BCNF)</strong></td>
+                            <td>Decomposition of flat record into 4 BCNF tables with lossless join proof</td>
+                            <td><code>docs/Normalization.md</code></td>
+                            <td>Proven lossless: $\text{STUDENTS} \cap \text{DEPARTMENTS} = \{\text{dept\_id}\}$ (PK)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Multi-Table SQL Joins</strong></td>
+                            <td>4-table INNER and LEFT OUTER joins to construct consolidated marksheets</td>
+                            <td><code>database/queries.sql</code></td>
+                            <td><code>FROM students s JOIN departments d ON s.dept_id = d.dept_id JOIN marks m ...</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aggregations & HAVING Clause</strong></td>
+                            <td>Grouping subject marks to compute pass percentages and identify low pass rates (&lt; 85%)</td>
+                            <td><code>database/queries.sql</code></td>
+                            <td><code>GROUP BY subject_code HAVING pass_percentage &lt; 85.0;</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>SQL Views & Triggers</strong></td>
+                            <td><code>v_student_semester_summary</code> view and automated grade calculation trigger</td>
+                            <td><code>database/views_triggers.sql</code></td>
+                            <td>Trigger automatically sets total, grade ('O', 'A+', 'RA'), and status on INSERT</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 3: FOUNDATIONS OF DATA SCIENCE -->
+<div class="subject-section d-none" id="section-ds">
+    <div class="card-academic mb-4">
+        <div class="card-header-academic bg-info-subtle">
+            <div>
+                <h5 class="fw-bold mb-1 text-info"><i class="fa-solid fa-chart-line"></i> Course: Foundations of Data Science (25ITC31)</h5>
+                <small class="text-muted">Faculty Presentation Reference Guide & Python Analytics</small>
+            </div>
+            <a href="/analytics" class="btn btn-sm btn-info text-white">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Analytics
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Faculty Presentation Oral Script -->
+            <div class="alert alert-info border-info small mb-4">
+                <strong><i class="fa-solid fa-microphone me-2"></i>What to say to Data Science Faculty:</strong><br>
+                <em>"Respected faculty, for Foundations of Data Science, our Python module executes an automated end-to-end data pipeline. In Unit 2 and 3, we connect directly to SQLite using <code>pandas.read_sql_query</code> and reshape the dataset using Pandas pivot tables. In Unit 4, we perform data quality audits checking for missing values and duplicates, and apply the Interquartile Range (IQR) method to detect grade anomalies. In Unit 5, we generate publication-quality visualizations including KDE distribution curves, Seaborn box plots for dispersion, and correlation heatmaps connecting CIA scores to semester exam performance."</em>
+            </div>
+
+            <!-- Concepts Implementation Table -->
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered table-academic align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 18%;">Syllabus Concept</th>
+                            <th style="width: 25%;">Implementation in Project</th>
+                            <th style="width: 22%;">Relevant Source File</th>
+                            <th>Demonstration / Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Database Extraction (Unit 2)</strong></td>
+                            <td>Extracting SQL tables directly into Pandas DataFrames and CSV exports</td>
+                            <td><code>python_analysis/db_extractor.py</code></td>
+                            <td><code>df_marks = pd.read_sql_query(query, conn)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Wrangling & Pivoting (Unit 3)</strong></td>
+                            <td>Reshaping student marks into a multidimensional student-by-course matrix</td>
+                            <td><code>python_analysis/data_preprocessing.py</code></td>
+                            <td><code>df.pivot_table(index=['register_no', 'name'], columns='subject_code', values='total_marks')</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Cleaning & Audit (Unit 4)</strong></td>
+                            <td>Null value detection (<code>isna().sum()</code>) and duplicate detection (<code>duplicated().sum()</code>)</td>
+                            <td><code>python_analysis/data_preprocessing.py</code></td>
+                            <td>Verified 0 missing values and 0 duplicate rows across 68 evaluation tuples</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Outlier Treatment (Unit 4)</strong></td>
+                            <td>Statistical IQR computation on score dispersion to flag scoring anomalies</td>
+                            <td><code>python_analysis/data_preprocessing.py</code></td>
+                            <td>$\text{IQR} = Q_3 - Q_1 = 25.50 \implies \text{Normal Range: } [22.50, 124.50]$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EDA & Visualization (Unit 5)</strong></td>
+                            <td>7 Matplotlib & Seaborn plots: Pass rates, grade donut, KDE distribution, boxplots, heatmaps</td>
+                            <td><code>python_analysis/visualizer.py</code></td>
+                            <td>Generated 300 DPI publication plots in <code>visualizations/*.png</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 4: SOFTWARE ENGINEERING -->
+<div class="subject-section d-none" id="section-se">
+    <div class="card-academic mb-4">
+        <div class="card-header-academic bg-success-subtle">
+            <div>
+                <h5 class="fw-bold mb-1 text-success"><i class="fa-solid fa-diagram-project"></i> Course: Software Engineering (25ITT33)</h5>
+                <small class="text-muted">Faculty Presentation Reference Guide & Software Process</small>
+            </div>
+            <a href="/software-engineering" class="btn btn-sm btn-success">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live SE Portal
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Faculty Presentation Oral Script -->
+            <div class="alert alert-success border-success small mb-4">
+                <strong><i class="fa-solid fa-microphone me-2"></i>What to say to Software Engineering Faculty:</strong><br>
+                <em>"Respected faculty, in Software Engineering, our project conforms to the IEEE Std 830-1998 Software Requirements Specification standard. We have specified 6 core functional requirements (FR-1 to FR-6) and 4 non-functional requirements. We designed comprehensive structural and behavioral models including 3-tier Architecture, Use Case diagrams, Class diagrams, Sequence diagrams, DFD Level 0 & Level 1, and Activity diagrams. In Unit 4 (Testing), we applied White-Box Basis Path Testing with a Cyclomatic Complexity of $V(G) = 6$ for grading logic and Black-Box Boundary Value Analysis, achieving 100% pass across 15 formal test cases."</em>
+            </div>
+
+            <!-- Concepts Implementation Table -->
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered table-academic align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 18%;">Syllabus Concept</th>
+                            <th style="width: 25%;">Implementation in Project</th>
+                            <th style="width: 22%;">Relevant Source File</th>
+                            <th>Demonstration / Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Requirements Engineering (Unit 2)</strong></td>
+                            <td>IEEE Std 830-1998 SRS document with Requirements Traceability Matrix</td>
+                            <td><code>docs/SRS.md</code></td>
+                            <td>Explicit mapping of FR-1 through FR-6 to database, Java, and Python layers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Architectural Design (Unit 3)</strong></td>
+                            <td>3-Tier Layered MVC Architecture separating presentation, business, and persistence</td>
+                            <td><code>docs/Design_Diagrams.md</code></td>
+                            <td>Clear abstraction barriers preventing tight coupling between UI and SQL</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Flow Modeling (Unit 3)</strong></td>
+                            <td>DFD Level 0 Context Diagram and Level 1 Functional Decomposition</td>
+                            <td><code>docs/Design_Diagrams.md</code></td>
+                            <td>Processes 1.0 to 5.0 with external entities and data stores D1-D4</td>
+                        </tr>
+                        <tr>
+                            <td><strong>White-Box Testing (Unit 4)</strong></td>
+                            <td>Basis Path Testing and Cyclomatic Complexity on decision nodes in grading logic</td>
+                            <td><code>docs/Testing_Documentation.md</code></td>
+                            <td>$V(G) = P + 1 = 5 + 1 = 6$ independent paths verified with 100% branch coverage</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Black-Box Testing (Unit 4)</strong></td>
+                            <td>Boundary Value Analysis (BVA) & Equivalence Partitioning on internal & external marks</td>
+                            <td><code>docs/Testing_Documentation.md</code></td>
+                            <td>15 formal test cases executed and passed with expected vs actual results recorded</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function switchSubject(sub) {
+    // Hide all sections
+    document.querySelectorAll('.subject-section').forEach(sec => sec.classList.add('d-none'));
+    document.querySelectorAll('.subject-pill-btn').forEach(btn => btn.classList.remove('active'));
+
+    // Show selected section
+    document.getElementById('section-' + sub).classList.remove('d-none');
+    document.getElementById('pill-' + sub).classList.add('active');
+}
+</script>
+{% endblock %}

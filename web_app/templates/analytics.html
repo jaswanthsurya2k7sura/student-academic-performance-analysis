@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Data Science Analytics - 25ITC31{% endblock %}
+{% block page_title %}Foundations of Data Science & EDA Analytics (25ITC31){% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <!-- Header Banner -->
+    <div class="col-12">
+        <div class="card-academic bg-white p-3 d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <h5 class="mb-1 fw-bold text-primary"><i class="fa-solid fa-chart-line"></i> Foundations of Data Science (25ITC31) Pipeline</h5>
+                <p class="text-muted small mb-0">Live Pandas wrangling, NumPy calculations, IQR outlier detection, and Matplotlib/Seaborn visualization engine.</p>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-sm" id="btnRerunPipeline" onclick="rerunPythonPipeline()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Re-Run Python EDA Pipeline
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Quality & Descriptive Stats Cards -->
+    <div class="col-lg-4">
+        <div class="card-academic mb-4">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic small">
+                    <i class="fa-solid fa-broom text-success"></i> Data Cleaning & Quality Audit (Unit 4)
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Total Marks Evaluated</span>
+                    <strong id="auditTotalRows">68 records</strong>
+                </div>
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Missing Values (Nulls)</span>
+                    <span class="badge bg-success">0 (Clean)</span>
+                </div>
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Duplicate Records</span>
+                    <span class="badge bg-success">0 (Distinct)</span>
+                </div>
+                <div class="d-flex justify-content-between py-2">
+                    <span class="text-muted">Data Preprocessing</span>
+                    <strong class="text-primary">Pandas & NumPy</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- IQR Outlier Detection Card -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic small">
+                    <i class="fa-solid fa-filter text-warning"></i> Outlier Analysis (IQR Method)
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between py-1 border-bottom small">
+                    <span class="text-muted">First Quartile (Q1 - 25%)</span>
+                    <strong id="iqrQ1">--</strong>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom small">
+                    <span class="text-muted">Third Quartile (Q3 - 75%)</span>
+                    <strong id="iqrQ3">--</strong>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom small">
+                    <span class="text-muted">Interquartile Range (IQR)</span>
+                    <strong id="iqrVal">--</strong>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom small">
+                    <span class="text-muted">Normal Lower Bound [Q1 - 1.5*IQR]</span>
+                    <span id="iqrLower" class="text-danger fw-bold">--</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom small">
+                    <span class="text-muted">Normal Upper Bound [Q3 + 1.5*IQR]</span>
+                    <span id="iqrUpper" class="text-success fw-bold">--</span>
+                </div>
+                <div class="d-flex justify-content-between py-2 small">
+                    <span class="text-muted">Detected Anomalies / Outliers</span>
+                    <span class="badge bg-success" id="iqrOutliersCount">0 Outliers</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Descriptive Statistics Table -->
+    <div class="col-lg-8">
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-table-cells text-info"></i> Descriptive Summary Statistics (Pandas DataFrame.describe())
+                </h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm text-center mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Statistic</th>
+                            <th>Internal Marks (Max 40)</th>
+                            <th>External Marks (Max 60)</th>
+                            <th>Total Marks (Max 100)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statsTableBody">
+                        <tr><td colspan="4" class="py-4 text-muted">Calculating statistics...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Student-Course Pivot Matrix (Unit 3) -->
+        <div class="card-academic">
+            <div class="card-header-academic">
+                <h6 class="card-title-academic">
+                    <i class="fa-solid fa-border-all text-secondary"></i> Student-Course Pivot Matrix (Pandas pivot_table)
+                </h6>
+            </div>
+            <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                <table class="table table-sm table-striped text-center mb-0" id="pivotTable">
+                    <thead class="sticky-top table-light" id="pivotHead"></thead>
+                    <tbody id="pivotBody">
+                        <tr><td class="py-3 text-muted">Loading pivot matrix...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visualizations Gallery (Matplotlib & Seaborn 300 DPI Exported Plots) -->
+<div class="card-academic mb-4">
+    <div class="card-header-academic">
+        <div class="d-flex align-items-center gap-3">
+            <h6 class="card-title-academic">
+                <i class="fa-solid fa-images text-primary"></i> Exploratory Data Analysis (EDA) Visualizations (Unit 5)
+            </h6>
+            <span class="badge bg-primary">7 High-Resolution Charts</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="border rounded p-2 text-center bg-light">
+                    <h6 class="fw-bold small text-dark mb-2">1. Subject-Wise Pass Percentage (with 85% Benchmark)</h6>
+                    <img src="/visualizations/01_subject_pass_percentage.png" alt="Subject Pass Percentage" class="img-fluid rounded border shadow-sm">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-2 text-center bg-light">
+                    <h6 class="fw-bold small text-dark mb-2">2. Department-Wide Letter Grade Distribution</h6>
+                    <img src="/visualizations/02_grade_distribution.png" alt="Grade Distribution" class="img-fluid rounded border shadow-sm">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-2 text-center bg-light">
+                    <h6 class="fw-bold small text-dark mb-2">3. Marks Distribution with Kernel Density Estimation (KDE)</h6>
+                    <img src="/visualizations/03_marks_distribution_kde.png" alt="Marks Distribution" class="img-fluid rounded border shadow-sm">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-2 text-center bg-light">
+                    <h6 class="fw-bold small text-dark mb-2">4. Subject Score Dispersion & Outliers (Seaborn Boxplot)</h6>
+                    <img src="/visualizations/04_subject_marks_boxplot.png" alt="Subject Boxplot" class="img-fluid rounded border shadow-sm">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-2 text-center bg-light">
+                    <h6 class="fw-bold small text-dark mb-2">5. Assessment Correlation Matrix (Seaborn Heatmap)</h6>
+                    <img src="/visualizations/05_correlation_heatmap.png" alt="Correlation Heatmap" class="img-fluid rounded border shadow-sm">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-2 text-center bg-light">
+                    <h6 class="fw-bold small text-dark mb-2">6. Class Section Comparison (25IT3A vs 25IT3B)</h6>
+                    <img src="/visualizations/06_section_performance_comparison.png" alt="Section Comparison" class="img-fluid rounded border shadow-sm">
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="border rounded p-2 text-center bg-light">
+                    <h6 class="fw-bold small text-dark mb-2">7. Department Merit Leaderboard (Featuring Jaswanth surya S - GPA 10.00)</h6>
+                    <img src="/visualizations/07_top_rankers_gpa.png" alt="Merit Leaderboard" class="img-fluid rounded border shadow-sm" style="max-height: 480px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terminal Log Output Modal -->
+<div class="modal fade" id="pipelineOutputModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title fw-bold"><i class="fa-brands fa-python text-success"></i> Python Data Science Pipeline Terminal</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="terminal-window m-0" style="max-height: 400px;">
+                    <div class="terminal-header">
+                        <span class="terminal-dot dot-red"></span>
+                        <span class="terminal-dot dot-yellow"></span>
+                        <span class="terminal-dot dot-green"></span>
+                        <span class="text-muted ms-2 small">python_analysis/run_analysis.py</span>
+                    </div>
+                    <pre id="pipelineLog" class="mb-0 text-success" style="font-family: var(--font-code);"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function loadDSAnalytics() {
+    fetch('/api/ds/summary')
+        .then(res => res.json())
+        .then(data => {
+            const st = data.descriptive_stats;
+            const medians = data.medians;
+            const tbody = document.getElementById('statsTableBody');
+            tbody.innerHTML = '';
+
+            const metricLabels = [
+                ['Sample Count (N)', 'count', false],
+                ['Mean (Average)', 'mean', true],
+                ['Std Deviation (σ)', 'std', true],
+                ['Minimum Score', 'min', true],
+                ['25th Percentile (Q1)', '25%', true],
+                ['Median (50%)', 'median', true],
+                ['75th Percentile (Q3)', '75%', true],
+                ['Maximum Score', 'max', true],
+                ['Variance (σ²)', 'variance', true],
+                ['Skewness', 'skewness', true]
+            ];
+
+            metricLabels.forEach(([label, key, isFloat]) => {
+                let vInt, vExt, vTot;
+                if (key === 'median') {
+                    vInt = medians.internal_marks.toFixed(2);
+                    vExt = medians.external_marks.toFixed(2);
+                    vTot = medians.total_marks.toFixed(2);
+                } else if (key === 'variance') {
+                    vInt = data.variances.internal_marks.toFixed(2);
+                    vExt = data.variances.external_marks.toFixed(2);
+                    vTot = data.variances.total_marks.toFixed(2);
+                } else if (key === 'skewness') {
+                    vInt = data.skews.internal_marks.toFixed(2);
+                    vExt = data.skews.external_marks.toFixed(2);
+                    vTot = data.skews.total_marks.toFixed(2);
+                } else {
+                    vInt = isFloat ? st.internal_marks[key].toFixed(2) : st.internal_marks[key];
+                    vExt = isFloat ? st.external_marks[key].toFixed(2) : st.external_marks[key];
+                    vTot = isFloat ? st.total_marks[key].toFixed(2) : st.total_marks[key];
+                }
+
+                const isHighlight = label.includes('Mean') || label.includes('Median');
+                const row = `
+                    <tr class="${isHighlight ? 'table-primary fw-bold' : ''}">
+                        <td class="text-start"><strong>${label}</strong></td>
+                        <td>${vInt}</td>
+                        <td>${vExt}</td>
+                        <td class="text-primary">${vTot}</td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+
+            // Outlier info
+            const iqr = data.iqr_analysis;
+            document.getElementById('iqrQ1').innerText = iqr.q1;
+            document.getElementById('iqrQ3').innerText = iqr.q3;
+            document.getElementById('iqrVal').innerText = iqr.iqr;
+            document.getElementById('iqrLower').innerText = iqr.lower_bound;
+            document.getElementById('iqrUpper').innerText = iqr.upper_bound;
+            document.getElementById('iqrOutliersCount').innerText = `${iqr.outliers_count} Outliers`;
+        });
+
+    // Load Pivot Table
+    fetch('/api/ds/pivot')
+        .then(res => res.json())
+        .then(data => {
+            const thead = document.getElementById('pivotHead');
+            const tbody = document.getElementById('pivotBody');
+
+            let headerHtml = '<tr>';
+            data.columns.forEach(c => {
+                headerHtml += `<th>${c}</th>`;
+            });
+            headerHtml += '</tr>';
+            thead.innerHTML = headerHtml;
+
+            tbody.innerHTML = '';
+            data.matrix.forEach(row => {
+                let rHtml = '<tr>';
+                data.columns.forEach(c => {
+                    const val = row[c];
+                    rHtml += `<td>${val !== undefined ? val : '-'}</td>`;
+                });
+                rHtml += '</tr>';
+                tbody.insertAdjacentHTML('beforeend', rHtml);
+            });
+        });
+}
+
+function rerunPythonPipeline() {
+    const btn = document.getElementById('btnRerunPipeline');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Executing Pipeline...';
+
+    fetch('/api/ds/rerun', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Re-Run Python EDA Pipeline';
+
+            if (data.success) {
+                showToast(data.message, 'success');
+                document.getElementById('pipelineLog').innerText = data.output;
+                new bootstrap.Modal(document.getElementById('pipelineOutputModal')).show();
+                loadDSAnalytics();
+            } else {
+                showToast('Pipeline execution failed.', 'danger');
+                document.getElementById('pipelineLog').innerText = data.error + '\n' + (data.stderr || '');
+                new bootstrap.Modal(document.getElementById('pipelineOutputModal')).show();
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Re-Run Python EDA Pipeline';
+            showToast('Failed to trigger pipeline.', 'danger');
+        });
+}
+
+document.addEventListener('DOMContentLoaded', loadDSAnalytics);
+</script>
+{% endblock %}

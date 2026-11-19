@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Subject Management - Academic Performance Portal{% endblock %}
+{% block page_title %}Curriculum Subject Management{% endblock %}
+
+{% block content %}
+<div class="card-academic">
+    <div class="card-header-academic">
+        <div class="d-flex align-items-center gap-3">
+            <h6 class="card-title-academic">
+                <i class="fa-solid fa-book text-warning"></i> Curriculum Course Directory
+            </h6>
+            <span class="badge bg-warning text-dark" id="subjectCountBadge">0 Courses</span>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+                <i class="fa-solid fa-plus"></i> Add New Subject
+            </button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-academic table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Subject Code</th>
+                    <th>Subject Name</th>
+                    <th>Department</th>
+                    <th>Semester</th>
+                    <th>Credits</th>
+                    <th>Internal (CIA)</th>
+                    <th>External (ESE)</th>
+                    <th>Max Total</th>
+                    <th>Pass Marks</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="subjectTableBody">
+                <tr><td colspan="10" class="text-center py-4 text-muted">Loading subjects...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal: Add Subject -->
+<div class="modal fade" id="addSubjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title fw-bold"><i class="fa-solid fa-book-medical text-primary"></i> Add Curriculum Subject</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addSubjectForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Subject Code *</label>
+                        <input type="text" name="subject_code" class="form-control" placeholder="e.g. 25ITT34" required pattern="^[a-zA-Z0-9]{5,15}$">
+                        <small class="text-muted">Autonomous subject course code.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Subject Name *</label>
+                        <input type="text" name="subject_name" class="form-control" placeholder="e.g. Computer Networks" required>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold">Department *</label>
+                            <select name="dept_id" class="form-select" required>
+                                <option value="1">Information Technology (IT)</option>
+                                <option value="2">Computer Science (CSE)</option>
+                                <option value="3">Electronics (ECE)</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small fw-bold">Semester *</label>
+                            <select name="semester" class="form-select" required>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3" selected>Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-4">
+                            <label class="form-label small fw-bold">Credits *</label>
+                            <input type="number" name="credits" class="form-control" value="3" min="1" max="6" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label small fw-bold">Max Internal</label>
+                            <input type="number" name="max_internal" class="form-control" value="40" readonly>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label small fw-bold">Max External</label>
+                            <input type="number" name="max_external" class="form-control" value="60" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Save Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function loadSubjects() {
+    fetch('/api/subjects')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('subjectTableBody');
+            document.getElementById('subjectCountBadge').innerText = `${data.subjects.length} Courses`;
+            tbody.innerHTML = '';
+
+            data.subjects.forEach(sub => {
+                const row = `
+                    <tr>
+                        <td><span class="badge bg-dark"><code>${sub.subject_code}</code></span></td>
+                        <td><strong>${sub.subject_name}</strong></td>
+                        <td><span class="badge bg-light text-dark">${sub.dept_code}</span></td>
+                        <td>Semester ${sub.semester}</td>
+                        <td><span class="badge bg-primary-subtle text-primary fw-bold">${sub.credits} Credits</span></td>
+                        <td>${sub.max_internal.toFixed(1)}</td>
+                        <td>${sub.max_external.toFixed(1)}</td>
+                        <td><strong>${sub.max_total.toFixed(1)}</strong></td>
+                        <td><span class="text-success fw-bold">50.0</span> <small class="text-muted">(Min Ext: 27)</small></td>
+                        <td class="text-end">
+                            <button class="btn btn-xs btn-outline-danger btn-sm" onclick="deleteSubject('${sub.subject_code}', '${sub.subject_name}')" title="Delete Course">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        })
+        .catch(err => {
+            console.error('Error loading subjects:', err);
+            showToast('Failed to load subject list.', 'danger');
+        });
+}
+
+function deleteSubject(code, name) {
+    if (confirm(`Are you sure you want to delete course ${name} (${code})?`)) {
+        fetch(`/api/subjects/${code}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadSubjects();
+                } else {
+                    showToast(data.message, 'danger');
+                }
+            })
+            .catch(() => showToast('Failed to delete subject.', 'danger'));
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadSubjects();
+
+    document.getElementById('addSubjectForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('/api/subjects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resp => {
+            if (resp.success) {
+                showToast(resp.message, 'success');
+                this.reset();
+                bootstrap.Modal.getInstance(document.getElementById('addSubjectModal')).hide();
+                loadSubjects();
+            } else {
+                showToast(resp.message, 'danger');
+            }
+        })
+        .catch(() => showToast('Failed to add subject.', 'danger'));
+    });
+});
+</script>
+{% endblock %}
